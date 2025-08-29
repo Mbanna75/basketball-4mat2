@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>بيئة افتراضية 4Mat - مهارات كرة السلة</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ff8a00;--muted:#98a0b3;--glass:rgba(255,255,255,0.03)}
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Arabic',sans-serif}
+    body{margin:0;background:linear-gradient(180deg,#071026 0%,#07182a 100%);color:#e6eef8}
+    header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.03)}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffc36b);display:flex;align-items:center;justify-content:center;font-weight:700;color:#072033}
+    nav{display:flex;gap:8px;align-items:center}
+    a.btn{background:var(--glass);padding:8px 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:14px}
+    a.btn.active{background:linear-gradient(90deg,rgba(255,138,0,0.16),rgba(255,138,0,0.08));color:#fff}
+    main{padding:18px;max-width:1200px;margin:18px auto}
+    .grid{display:grid;grid-template-columns:300px 1fr;gap:18px}
+    aside{background:rgba(255,255,255,0.02);padding:14px;border-radius:12px}
+    .card{background:rgba(255,255,255,0.03);padding:14px;border-radius:12px;margin-bottom:12px}
+    h1,h2,h3{margin:6px 0}
+    .skill-list{display:flex;flex-direction:column;gap:8px}
+    .skill-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;background:linear-gradient(180deg,transparent,rgba(255,255,255,0.02));cursor:pointer}
+    .content{background:rgba(255,255,255,0.02);padding:16px;border-radius:12px;min-height:520px}
+    .section{display:none}
+    .section.active{display:block}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#ffc36b);color:#072033;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    .muted{color:var(--muted)}
+    .quiz{display:flex;flex-direction:column;gap:10px}
+    .quiz .q{background:rgba(0,0,0,0.25);padding:10px;border-radius:8px}
+    input[type=file]{display:none}
+    .uploader{border:2px dashed rgba(255,255,255,0.03);padding:12px;border-radius:8px;text-align:center}
+    .canvas-sim{background:#06101a;border-radius:8px;padding:6px}
+    .progress-meter{height:12px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden}
+    .progress-meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ffc36b);width:0%}
+    footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
+    .small{font-size:13px;color:var(--muted)}
+    .forum-list{max-height:200px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+    textarea{width:100%;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);color:inherit;border:1px solid rgba(255,255,255,0.02)}
+    .dashboard{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media(max-width:880px){.grid{grid-template-columns:1fr;}.brand span{display:none}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">4M</div>
+      <div>
+        <div style="font-weight:700">بيئة افتراضية - نموذج 4Mat</div>
+        <div class="small">تعليم مهارات كرة السلة: المحاورة - التمريرة الصدرية - التصويب</div>
+      </div>
+    </div>
+    <nav>
+      <a class="btn active" href="#home" data-route>الرئيسية</a>
+      <a class="btn" href="#dribble" data-route>المحاورة</a>
+      <a class="btn" href="#chestpass" data-route>التمرير الصدري</a>
+      <a class="btn" href="#shoot" data-route>التصويب من الثبات</a>
+      <a class="btn" href="#analytics" data-route>التحليلات</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="grid">
+      <aside>
+        <div class="card">
+          <h3>مسار التعلم 4Mat</h3>
+          <div class="small">اختر أحد المسارات داخل كل مهارة: لماذا / ماذا / كيف / ماذا لو</div>
+        </div>
+        <div class="card">
+          <h3>التقدم</h3>
+          <div class="small">إكمال الوحدات</div>
+          <div style="margin-top:8px">
+            <div class="small">المحاورة <div class="progress-meter" style="margin-top:6px"><i id="p-dribble" style="width:0%"></i></div></div>
+            <div class="small">التمرير الصدري <div class="progress-meter" style="margin-top:6px"><i id="p-chest" style="width:0%"></i></div></div>
+            <div class="small">التصويب <div class="progress-meter" style="margin-top:6px"><i id="p-shoot" style="width:0%"></i></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>الدعم</h3>
+          <div class="small">منتدى المجموعات</div>
+          <div class="forum-list" id="forum">
+            <!-- forum posts -->
+          </div>
+          <textarea id="forum-msg" rows="2" placeholder="أضف مشاركة..."></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-primary" id="post-forum">نشر</button><button class="btn" id="join-meet">اجتماع (Meet)</button></div>
+        </div>
+      </aside>
+
+      <section class="content">
+
+        <!-- HOME -->
+        <div id="home" class="section active">
+          <h1>الصفحة الرئيسية</h1>
+          <p class="muted">مرحبًا بك في بيئة افتراضية مبنية على نموذج 4Mat — اختر مهارة لبدء المسار التعليمي أو استعرض لوحة التحليلات والمتطلبات التقنية.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px">
+            <div class="card">
+              <h3>المهارات</h3>
+              <div class="skill-list">
+                <div class="skill-item" data-link="#dribble">المحاورة (Dribble)</div>
+                <div class="skill-item" data-link="#chestpass">التمرير الصدري (Chest Pass)</div>
+                <div class="skill-item" data-link="#shoot">التصويب من الثبات (Shooting)</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>ما الذي سنقدمه</h3>
+              <ul>
+                <li>دورة 4Mat لكل مهارة: لماذا - ماذا - كيف - ماذا لو</li>
+                <li>تمارين تفاعلية ومحاكاة مسار الكرة</li>
+                <li>رفع فيديوهات الأداء وملاحظات المعلم</li>
+                <li>اختبارات قصيرة وروبركات تقييم</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>متطلبات تقنية</h3>
+              <ol>
+                <li>متصفح حديث (Chrome/Edge/Firefox)</li>
+                <li>كاميرا أو هاتف لتسجيل الأداء</li>
+                <li>اتصال إنترنت لتحميل الفيديوهات وفتح الاجتماعات</li>
+              </ol>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- DRIBBLE PAGE -->
+        <div id="dribble" class="section">
+          <h1>المحاورة (Dribble)</h1>
+          <div class="small muted">وحدة 4Mat: لماذا - ماذا - كيف - ماذا لو</div>
+
+          <div style="margin-top:12px;display:grid;grid-template-columns:1fr 360px;gap:12px">
+            <div>
+              <div class="card">
+                <h3>اختر المسار 4Mat</h3>
+                <div class="controls">
+                  <button class="btn" data-4mat="why" data-skill="dribble">لماذا؟</button>
+                  <button class="btn" data-4mat="what" data-skill="dribble">ماذا؟</button>
+                  <button class="btn" data-4mat="how" data-skill="dribble">كيف؟</button>
+                  <button class="btn" data-4mat="whatif" data-skill="dribble">ماذا لو؟</button>
+                </div>
+              </div>
+
+              <div id="dribble-why" class="card mat-section" style="display:none">
+                <h3>لماذا؟ (التحفيز)</h3>
+                <p>المحاورة أساسية للسيطرة على الكرة والتحرك في الملعب. تمريرة واحدة خاطئة أو فقدان تنطيط قد تكلف الفريق هجمة كاملة.</p>
+                <div class="small">نشاط: راجع مقطع توضيحي قصير (حمّل فيديو قصير أو استعرض المثال).</div>
+              </div>
+
+              <div id="dribble-what" class="card mat-section" style="display:none">
+                <h3>ماذا؟ (المعرفة)</h3>
+                <ul>
+                  <li>وضعية الجسم الأساسية وتنفيذ التنطيط بالمعصم وليس بالذراع بالكامل.</li>
+                  <li>تبديل اليدين، رؤية الملعب، استخدام الحماية بالجسد.</li>
+                </ul>
+                <div><strong>تحقق سريع</strong></div>
+                <div class="quiz" data-skill="dribble">
+                  <div class="q">1) ما هي اليد الأفضل لتنفيذ تنطيط وحيد المحطة؟
+                    <div><label><input type="radio" name="q1"> اليد الأقرب للخط</label></div>
+                    <div><label><input type="radio" name="q1"> اليد البعيدة عن المدافع</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="dribble-how" class="card mat-section" style="display:none">
+                <h3>كيف؟ (تدريب موجّه)</h3>
+                <p>تجربة محاكاة لمسار الكرة: اضبط الزاوية والقوة ثم شاهد مسار الكرة. الهدف أن يتحكم المتعلم بسرعة ويعدل القوة والارتفاع ليتجنب فقدان السيطرة.</p>
+                <div class="canvas-sim">
+                  <canvas id="sim-dribble" width="720" height="240" style="width:100%;height:180px;background:#06101a;border-radius:6px"></canvas>
+                  <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+                    <label class="small">زاوية: <input id="angle-dribble" type="range" min="10" max="80" value="45"></label>
+                    <label class="small">قوة: <input id="power-dribble" type="range" min="1" max="20" value="10"></label>
+                    <button class="btn-primary" id="run-dribble">جرب</button>
+                  </div>
+                </div>
+
+                <div style="margin-top:10px">
+                  <h4>مهمة فيديو قصيرة</h4>
+                  <div class="uploader">
+                    <label for="upload-dribble" class="btn">رفع فيديو أداء</label>
+                    <input id="upload-dribble" type="file" accept="video/*">
+                    <div class="small muted">رفع فيديو 30–60 ثانية. ستتلقى ملاحظات من المدرّب.</div>
+                    <video id="preview-dribble" controls style="width:100%;display:none;margin-top:8px"></video>
+                  </div>
+                </div>
+              </div>
+
+              <div id="dribble-whatif" class="card mat-section" style="display:none">
+                <h3>ماذا لو؟ (مواقف لعب)</h3>
+                <p>سيناريو: مهاجم يواجه مدافع قوي. عليك الاختيار: الاحتفاظ بالتنطيط، تغيير اليد، أو تمرير الكرة. اختبر قرارك في هذا التمرين التفاعلي.</p>
+                <div style="margin-top:8px">
+                  <div class="small">اختر قرارك:</div>
+                  <div style="display:flex;gap:8px;margin-top:8px">
+                    <button class="btn" data-decision="hold">الاحتفاظ</button>
+                    <button class="btn" data-decision="switch">تبديل اليد</button>
+                    <button class="btn" data-decision="pass">تمرير</button>
+                  </div>
+                  <div id="decision-result" style="margin-top:10px" class="small muted"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <aside style="min-width:320px">
+              <div class="card">
+                <h3>قائمة ملاحظة - المحاورة</h3>
+                <div class="small">ضع علامة على كل بند بعد مشاهدة / تسجيل الأداء.</div>
+                <div style="margin-top:8px">
+                  <label><input type="checkbox" id="chk1"> تحكم بالمعصم لا بالذراع</label><br>
+                  <label><input type="checkbox" id="chk2"> المحافظة على الرؤية للأمام</label><br>
+                  <label><input type="checkbox" id="chk3"> تبديل اليدين بسلاسة</label><br>
+                </div>
+                <div style="margin-top:10px"><button class="btn-primary" id="save-dribble-notes">حفظ الملاحظات</button></div>
+              </div>
+
+              <div class="card">
+                <h3>أسئلة شائعة</h3>
+                <div class="small">• كيف أحسن التنطيط تحت الضغط؟</div>
+                <div class="small muted">التدريب الجزئي مع عدّ وتركيز على الرؤية.</div>
+              </div>
+            </aside>
+
+          </div>
+        </div>
+
+        <!-- CHEST PASS PAGE -->
+        <div id="chestpass" class="section">
+          <h1>التمرير الصدري (Chest Pass)</h1>
+          <div class="small muted">وحدة 4Mat: لماذا - ماذا - كيف - ماذا لو</div>
+
+          <div style="margin-top:12px;display:grid;grid-template-columns:1fr 360px;gap:12px">
+            <div>
+              <div class="card">
+                <h3>اختر المسار 4Mat</h3>
+                <div class="controls">
+                  <button class="btn" data-4mat="why" data-skill="chest">لماذا؟</button>
+                  <button class="btn" data-4mat="what" data-skill="chest">ماذا؟</button>
+                  <button class="btn" data-4mat="how" data-skill="chest">كيف؟</button>
+                  <button class="btn" data-4mat="whatif" data-skill="chest">ماذا لو؟</button>
+                </div>
+              </div>
+
+              <div id="chest-why" class="card mat-section" style="display:none">
+                <h3>لماذا؟</h3>
+                <p>التمرير الصدري سريع ودقيق، مناسب لهجمات سريعة ويقلل الوقت المستغرق لتمرير الكرة.</p>
+              </div>
+
+              <div id="chest-what" class="card mat-section" style="display:none">
+                <h3>ماذا؟</h3>
+                <p>خطوات التمريرة: استعداد، ضم الكرة، دفع من الصدر، متابعة المعصمين.</p>
+                <div class="small">تحقق: ما الخطأ الشائع؟ (اختيار)</div>
+                <div class="quiz" data-skill="chest">
+                  <div class="q">1) الخطأ الأكثر شيوعًا
+                    <div><label><input type="radio" name="c1"> دفع من الكتف</label></div>
+                    <div><label><input type="radio" name="c1"> متابعة المعصم</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="chest-how" class="card mat-section" style="display:none">
+                <h3>كيف؟</h3>
+                <p>محاكاة "نافذة الهدف": اضبط زاوية اليدين وشاهد مركز التمريرة. هدفنا نسبة دقة ≥ 80%.</p>
+                <div class="canvas-sim">
+                  <canvas id="sim-chest" width="720" height="240" style="width:100%;height:180px;background:#06101a;border-radius:6px"></canvas>
+                  <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+                    <label class="small">انحراف x: <input id="offset-chest" type="range" min="-30" max="30" value="0"></label>
+                    <button class="btn-primary" id="run-chest">تحقق الدقة</button>
+                    <div class="small muted" id="chest-score">النقاط: -</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:10px">
+                  <h4>مهمة فيديو</h4>
+                  <div class="uploader">
+                    <label for="upload-chest" class="btn">رفع فيديو أداء</label>
+                    <input id="upload-chest" type="file" accept="video/*">
+                    <video id="preview-chest" controls style="width:100%;display:none;margin-top:8px"></video>
+                  </div>
+                </div>
+              </div>
+
+              <div id="chest-whatif" class="card mat-section" style="display:none">
+                <h3>ماذا لو؟</h3>
+                <p>موقف: زميل مستدير الجسم لا يزال متحركًا. هل تغير نوع التمريرة؟ اختر وتمثّل القرار.</p>
+                <div style="margin-top:8px">
+                  <button class="btn" data-decision="ch-pass">تمرير الصدر</button>
+                  <button class="btn" data-decision="bounce-pass">تمرير مرتد</button>
+                  <div id="chest-decision" class="small muted" style="margin-top:8px"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <aside style="min-width:320px">
+              <div class="card">
+                <h3>قائمة ملاحظة - التمرير الصدري</h3>
+                <label><input type="checkbox" id="cchk1"> الكوعان إلى الأمام</label><br>
+                <label><input type="checkbox" id="cchk2"> متابعة المعصم</label><br>
+                <label><input type="checkbox" id="cchk3"> انطلاق سريع</label><br>
+                <div style="margin-top:10px"><button class="btn-primary" id="save-chest-notes">حفظ الملاحظات</button></div>
+              </div>
+            </aside>
+
+          </div>
+        </div>
+
+        <!-- SHOOT PAGE -->
+        <div id="shoot" class="section">
+          <h1>التصويب من الثبات (Shooting)</h1>
+          <div class="small muted">وحدة 4Mat: لماذا - ماذا - كيف - ماذا لو</div>
+
+          <div style="margin-top:12px;display:grid;grid-template-columns:1fr 360px;gap:12px">
+            <div>
+              <div class="card">
+                <h3>اختر المسار 4Mat</h3>
+                <div class="controls">
+                  <button class="btn" data-4mat="why" data-skill="shoot">لماذا؟</button>
+                  <button class="btn" data-4mat="what" data-skill="shoot">ماذا؟</button>
+                  <button class="btn" data-4mat="how" data-skill="shoot">كيف؟</button>
+                  <button class="btn" data-4mat="whatif" data-skill="shoot">ماذا لو؟</button>
+                </div>
+              </div>
+
+              <div id="shoot-why" class="card mat-section" style="display:none">
+                <h3>لماذا؟</h3>
+                <p>التصويب مؤشر قوي على كفاءة اللاعب في استغلال الفرص، يتطلب توازنًا دقيقًا وتتبعًا للمتغيرات (موضع القدم، زاوية المرفق، المتابعة).</p>
+              </div>
+
+              <div id="shoot-what" class="card mat-section" style="display:none">
+                <h3>ماذا؟</h3>
+                <p>مبدأ BEEF: Balance, Eyes, Elbow, Follow-through. تعلم كل عنصر وتطبيقه خطوة بخطوة.</p>
+                <div class="quiz" data-skill="shoot">
+                  <div class="q">1) في BEEF ماذا يعني B؟
+                    <div><label><input type="radio" name="s1"> Balance</label></div>
+                    <div><label><input type="radio" name="s1"> Butt</label></div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="shoot-how" class="card mat-section" style="display:none">
+                <h3>كيف؟</h3>
+                <p>محاكاة تتبع القوس: اضبط زاوية الرمي والشدة لتصل الكرة داخل الطوق الافتراضي.</p>
+                <div class="canvas-sim">
+                  <canvas id="sim-shoot" width="720" height="240" style="width:100%;height:180px;background:#06101a;border-radius:6px"></canvas>
+                  <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+                    <label class="small">زاوية: <input id="angle-shoot" type="range" min="20" max="80" value="50"></label>
+                    <label class="small">قوة: <input id="power-shoot" type="range" min="1" max="25" value="12"></label>
+                    <button class="btn-primary" id="run-shoot">اطلق</button>
+                    <div class="small muted" id="shoot-score">النتيجة: -</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:10px">
+                  <h4>مهمة فيديو</h4>
+                  <div class="uploader">
+                    <label for="upload-shoot" class="btn">رفع فيديو أداء</label>
+                    <input id="upload-shoot" type="file" accept="video/*">
+                    <video id="preview-shoot" controls style="width:100%;display:none;margin-top:8px"></video>
+                  </div>
+                </div>
+
+              </div>
+
+              <div id="shoot-whatif" class="card mat-section" style="display:none">
+                <h3>ماذا لو؟</h3>
+                <p>موقف: 10 ثوانٍ في الهجوم. هل تصوب الآن أم تمرر؟ اتخذ قرارًا واطرح سببك.</p>
+                <textarea id="shoot-response" rows="3" placeholder="اكتب قرارك هنا"></textarea>
+                <div style="margin-top:8px"><button class="btn-primary" id="save-shoot-decision">حفظ القرار</button></div>
+              </div>
+
+            </div>
+
+            <aside style="min-width:320px">
+              <div class="card">
+                <h3>قائمة ملاحظة - التصويب</h3>
+                <label><input type="checkbox" id="schk1"> توازن جيد</label><br>
+                <label><input type="checkbox" id="schk2"> مرفق متجه للهدف</label><br>
+                <label><input type="checkbox" id="schk3"> متابعة واضحة</label><br>
+                <div style="margin-top:10px"><button class="btn-primary" id="save-shoot-notes">حفظ الملاحظات</button></div>
+              </div>
+
+              <div class="card">
+                <h3>قواعد بسيطة</h3>
+                <div class="small">تدريب 100 تسديدة موزعة على جلسات قصيرة أفضل من 20 تسديدة مرة واحدة.</div>
+              </div>
+            </aside>
+
+          </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div id="analytics" class="section">
+          <h1>التحليلات والمتابعة</h1>
+          <div class="small muted">لوحة تحكم بسيطة تحفظ البيانات محليًا (LocalStorage) وتولّد ملف سجل xAPI تقريبي.</div>
+
+          <div class="card dashboard">
+            <div>
+              <h3>ملخص تقدم</h3>
+              <div id="summary"></div>
+            </div>
+            <div>
+              <h3>سجل الأحداث (xAPI-like)</h3>
+              <pre id="xapi" style="max-height:300px;overflow:auto;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px"></pre>
+              <div style="margin-top:8px"><button class="btn-primary" id="download-xapi">تحميل السجل (.json)</button></div>
+            </div>
+
+            <div style="grid-column:1/3">
+              <h3>روبركات ومخرجات</h3>
+              <div class="small">عرض نقاط التقييم لكل مهمة فيديو وقوائم الملاحظة.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    تمّ التصميم كقالب بيئة افتراضية تعليميّة - يمكنك رفع هذا المشروع على GitHub Pages لعرضه مباشرة.
+  </footer>
+
+  <script>
+    // Routing
+    function route(){
+      const hash = location.hash ? location.hash.substring(1) : 'home';
+      document.querySelectorAll('a[data-route]').forEach(a=>a.classList.toggle('active', a.getAttribute('href')===('#'+hash)));
+      document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active', s.id===hash));
+      // update progress bars
+      updateProgressUI();
+    }
+    window.addEventListener('hashchange', route);
+    route();
+
+    // 4Mat buttons
+    document.querySelectorAll('[data-4mat]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const m = btn.getAttribute('data-4mat');
+        const skill = btn.getAttribute('data-skill');
+        // hide all mat sections for that skill
+        ['why','what','how','whatif'].forEach(x=>{
+          const el=document.getElementById(`${skill}-${x}`)||document.getElementById(`${skill}-${x}`);
+          if(el) el.style.display='none';
+        });
+        const target=document.getElementById(`${skill}-${m}`);
+        if(target) target.style.display='block';
+      });
+    });
+
+    // Dribble sim
+    function drawSim(canvasId, angleId, powerId){
+      const cv=document.getElementById(canvasId);
+      const ctx=cv.getContext('2d');
+      const angle=document.getElementById(angleId);
+      const power=document.getElementById(powerId);
+      function render(){
+        ctx.clearRect(0,0,cv.width,cv.height);
+        ctx.fillStyle='#072033';ctx.fillRect(0,0,cv.width,cv.height);
+        // draw ground
+        ctx.fillStyle='#08303f';ctx.fillRect(0,cv.height-30,cv.width,30);
+      }
+      render();
+      return function(){
+        // simple projectile
+        const a = Number(angle.value)*Math.PI/180;
+        const p = Number(power.value);
+        const vx = p*Math.cos(a);
+        const vy = -p*Math.sin(a);
+        let x=20,y=cv.height-40, t=0;
+        const points=[];
+        for(let i=0;i<200;i++){ t=i*0.1; const gx= x+vx*t*10; const gy=y+vy*t*10 + 4.9*(t*t); points.push([gx,gy]); if(gy>cv.height-35) break; }
+        render();
+        ctx.fillStyle='#ffcc88';
+        points.forEach(p=>{ctx.beginPath();ctx.arc(p[0],p[1],5,0,2*Math.PI);ctx.fill();});
+      }
+    }
+    const runDribble = drawSim('sim-dribble','angle-dribble','power-dribble');
+    document.getElementById('run-dribble').addEventListener('click',()=>{ runDribble(); logEvent('simulate','dribble',{angle:document.getElementById('angle-dribble').value,power:document.getElementById('power-dribble').value}); });
+
+    // Chest sim
+    const runChest = drawSim('sim-chest','offset-chest','offset-chest');
+    document.getElementById('run-chest').addEventListener('click',()=>{ runChest(); // crude score
+      const score = 100 - Math.abs(document.getElementById('offset-chest').value);
+      document.getElementById('chest-score').textContent = 'النقاط: ' + Math.max(0,Math.round(score));
+      logEvent('simulate','chest',{offset:document.getElementById('offset-chest').value,score:Math.round(score)});
+      saveProgress('chest', Math.max(0,Math.round(score)));
+    });
+
+    // Shoot sim
+    const runShoot = drawSim('sim-shoot','angle-shoot','power-shoot');
+    document.getElementById('run-shoot').addEventListener('click',()=>{ runShoot(); const angle=Number(document.getElementById('angle-shoot').value); const power=Number(document.getElementById('power-shoot').value); const score = Math.max(0, Math.round(100 - Math.abs(50-angle) - Math.abs(12-power))); document.getElementById('shoot-score').textContent='النتيجة: '+score; logEvent('simulate','shoot',{angle, power, score}); saveProgress('shoot', score); });
+
+    // Decision buttons
+    document.querySelectorAll('[data-decision]').forEach(b=>b.addEventListener('click',()=>{ const d=b.getAttribute('data-decision'); document.getElementById('decision-result').textContent='تم اختيار: '+d; logEvent('decision','dribble',{decision:d});}));
+    document.querySelectorAll('[data-decision]').forEach(b=>b.addEventListener('click',()=>{}));
+    document.querySelectorAll('#chestpass [data-decision]').forEach(b=>b.addEventListener('click',()=>{ const d=b.getAttribute('data-decision'); document.getElementById('chest-decision').textContent='اختيارك: '+d; logEvent('decision','chest',{decision:d});}));
+
+    // Video uploads preview & store in localStorage as metadata only
+    function setupUploader(inputId, previewId, skill){
+      const inp=document.getElementById(inputId); const vid=document.getElementById(previewId);
+      inp.addEventListener('change',()=>{
+        const file=inp.files[0]; if(!file) return;
+        const url=URL.createObjectURL(file); vid.src=url; vid.style.display='block'; logEvent('upload',skill,{name:file.name,size:file.size});
+      });
+    }
+    setupUploader('upload-dribble','preview-dribble','dribble');
+    setupUploader('upload-chest','preview-chest','chest');
+    setupUploader('upload-shoot','preview-shoot','shoot');
+
+    // Forum
+    const forumList=document.getElementById('forum'); const forumMsg=document.getElementById('forum-msg'); document.getElementById('post-forum').addEventListener('click',()=>{ const text=forumMsg.value.trim(); if(!text) return; const post={id:Date.now(),text,ts:new Date().toLocaleString()}; const posts=getStore('forum')||[]; posts.unshift(post); setStore('forum',posts); renderForum(); forumMsg.value=''; logEvent('forum_post',null,post); });
+    function renderForum(){ const posts=getStore('forum')||[]; forumList.innerHTML=''; posts.forEach(p=>{ const d=document.createElement('div'); d.className='small muted'; d.textContent = p.ts + ' — ' + p.text; forumList.appendChild(d); }); }
+    renderForum();
+
+    // Notes save
+    document.getElementById('save-dribble-notes').addEventListener('click',()=>{ const notes={chk1:document.getElementById('chk1').checked,chk2:document.getElementById('chk2').checked,chk3:document.getElementById('chk3').checked}; setStore('notes_dribble',notes); logEvent('notes_saved','dribble',notes); updateProgressUI(); });
+    document.getElementById('save-chest-notes').addEventListener('click',()=>{ const notes={cchk1:document.getElementById('cchk1').checked,cchk2:document.getElementById('cchk2').checked,cchk3:document.getElementById('cchk3').checked}; setStore('notes_chest',notes); logEvent('notes_saved','chest',notes); updateProgressUI(); });
+    document.getElementById('save-shoot-notes').addEventListener('click',()=>{ const notes={schk1:document.getElementById('schk1').checked,schk2:document.getElementById('schk2').checked,schk3:document.getElementById('schk3').checked}; setStore('notes_shoot',notes); logEvent('notes_saved','shoot',notes); updateProgressUI(); });
+
+    // Save shoot decision
+    document.getElementById('save-shoot-decision').addEventListener('click',()=>{ const txt=document.getElementById('shoot-response').value||''; setStore('shoot_decision',txt); logEvent('decision_saved','shoot',{text:txt}); updateProgressUI(); });
+
+    // Simple storage helpers
+    function setStore(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+    function getStore(k){ const s=localStorage.getItem(k); return s?JSON.parse(s):null; }
+
+    // Progress saving (scores 0-100)
+    function saveProgress(skill,score){ const p=getStore('progress')||{}; p[skill]=Math.max(p[skill]||0,score); setStore('progress',p); updateProgressUI(); }
+    function updateProgressUI(){ const p=getStore('progress')||{}; document.getElementById('p-dribble').style.width=(p.dribble||0)+'%'; document.getElementById('p-chest').style.width=(p.chest||0)+'%'; document.getElementById('p-shoot').style.width=(p.shoot||0)+'%'; // summary
+      const summary=document.getElementById('summary'); if(summary){ summary.innerHTML = '<div class=\"small\">المحاورة: '+(p.dribble||0) + '%</div><div class=\"small\">التمرير الصدري: '+(p.chest||0) + '%</div><div class=\"small\">التصويب: '+(p.shoot||0) + '%</div>'; }
+    }
+
+    // Logging xAPI-like
+    function logEvent(verb,activity,obj){ const logs=getStore('xapi')||[]; const entry={id:Date.now(),actor:'learner',verb,activity,object:obj||null,time:new Date().toISOString()}; logs.unshift(entry); setStore('xapi',logs); renderXapi(); }
+    function renderXapi(){ const logs=getStore('xapi')||[]; document.getElementById('xapi').textContent = JSON.stringify(logs,null,2); }
+    renderXapi();
+    document.getElementById('download-xapi').addEventListener('click',()=>{ const data=getStore('xapi')||[]; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='xapi_log.json'; a.click(); URL.revokeObjectURL(url); });
+
+    // save progress from notes checkboxes as partial completion when saved
+    function saveProgressFromNotes(){ const n1=getStore('notes_dribble'); if(n1) saveProgress('dribble', Math.min(100, 30 + (n1.chk1?20:0)+(n1.chk2?25:0)+(n1.chk3?25:0)) ); const n2=getStore('notes_chest'); if(n2) saveProgress('chest', Math.min(100, 30 + (n2.cchk1?30:0)+(n2.cchk2?35:0)+(n2.cchk3?35:0)) ); const n3=getStore('notes_shoot'); if(n3) saveProgress('shoot', Math.min(100, 30 + (n3.schk1?30:0)+(n3.schk2?35:0)+(n3.schk3?35:0)) ); }
+    saveProgressFromNotes();
+
+    // Join Meet
+    document.getElementById('join-meet').addEventListener('click',()=>{ window.open('https://meet.google.com','_blank'); logEvent('join_meet',null,null); });
+
+    // Initial route linking from skill items
+    document.querySelectorAll('.skill-item').forEach(it=>it.addEventListener('click',()=>{ location.hash = it.getAttribute('data-link'); }));
+
+    // Download template for GitHub (zip not implemented) - instead show instructions
+    // Render saved xapi on load
+    updateProgressUI();
+
+    // small utility: populate saved fields if exist
+    (function populate(){ const sd=getStore('shoot_decision'); if(sd) document.getElementById('shoot-response').value=sd; const p=getStore('progress')||{}; if(p.dribble) document.getElementById('p-dribble').style.width=p.dribble+'%'; })();
+  </script>
+</body>
+</html>
